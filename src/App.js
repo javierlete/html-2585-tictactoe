@@ -31,9 +31,9 @@ function Board({ xIsNext, squares, onPlay }) {
   // let cuadros;
 
   // for(let fila = 0; fila < 3; fila++) {
-    
+
   //   cuadros = [];
-    
+
   //   for(let i = 0; i < 3; i++) {
   //     cuadros.push(
   //       <Square
@@ -64,6 +64,7 @@ function Board({ xIsNext, squares, onPlay }) {
 }
 
 export default function Game() {
+  const [ascendente, setAscendente] = useState(true);
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const [currentMove, setCurrentMove] = useState(0);
 
@@ -79,37 +80,50 @@ export default function Game() {
     setCurrentMove(nextMove);
   }
 
-  const moves = history.map((squares, move) => {
-    let description;
-    if (move > 0) {
-      description = 'Go to move #' + move;
-    } else {
-      description = 'Go to game start';
-    }
 
-    const id = move;
-
-    return (
-      <li key={id}>
-        {currentMove === move ?
-          <div>You are at move #{move}</div> :
-          <button onClick={() => jumpTo(move)}>{description}</button>}
-      </li>
-    );
-  });
+  function cambiarOrdenacion() {
+    setAscendente(!ascendente);
+  }
 
   return (
-    <div className="game">
-      <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+    <>
+      <div className="game">
+        <div className="game-board">
+          <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+        </div>
+        <div className="game-info">
+          <button onClick={cambiarOrdenacion}>Cambiar ordenación a {ascendente ? 'Descendente' : 'Ascendente'}</button>
+          <div>Mostrando en sentido {ascendente ? 'Ascendente' : 'Descendente'}</div>
+          <ol>
+            {listarMovimientos()}
+          </ol>
+        </div>
       </div>
-      <div className="game-info">
-        <ol>
-          {moves}
-        </ol>
-      </div>
-    </div>
+    </>
   );
+
+  function listarMovimientos() {
+    let movimientos = history.map((squares, move) => {
+      let description;
+      if (move > 0) {
+        description = 'Go to move #' + move;
+      } else {
+        description = 'Go to game start';
+      }
+
+      const id = move;
+
+      return (
+        <li key={id}>
+          {currentMove === move ?
+            <div>You are at move #{move}</div> :
+            <button onClick={() => jumpTo(move)}>{description}</button>}
+        </li>
+      );
+    });
+
+    return ascendente ? movimientos: movimientos.reverse();
+  }
 }
 function calculateWinner(squares) {
   const lines = [
