@@ -72,9 +72,14 @@ export default function Game() {
     } else {
       description = 'Go to game start';
     }
+
+    const id = move;
+    
     return (
-      <li key={move}>
-        <button onClick={() => jumpTo(move)}>{description}</button>
+      <li key={id}>
+        {currentMove === move ? 
+          <div>You are at move #{move}</div> :
+          <button onClick={() => jumpTo(move)}>{description}</button>}
       </li>
     );
   });
@@ -104,8 +109,8 @@ function calculateWinner(squares) {
     [2, 4, 6]
   ];
 
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
+  for (const line of lines) {
+    const [a, b, c] = line;
 
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
       return squares[a];
