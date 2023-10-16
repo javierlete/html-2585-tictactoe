@@ -1,16 +1,17 @@
 import { useState } from "react";
 
-function Square({ value, onSquareClick }) {
-  return <button onClick={onSquareClick} className="square">{value}</button>;
+function Square({ iluminada, value, onSquareClick }) {
+  return <button onClick={onSquareClick} className={'square ' + (iluminada ? 'posicion-ganadora' : '')}>{value}</button>;
 }
 
 function Board({ xIsNext, squares, onPlay }) {
 
-  const winner = calculateWinner(squares);
+  const posicionesGanadoras = calculateWinner(squares);
 
   let status;
 
-  if (winner) {
+  if (posicionesGanadoras) {
+    const winner = squares[posicionesGanadoras[0]];
     status = "Winner: " + winner;
   } else {
     status = "Next player: " + (xIsNext ? "X" : "O");
@@ -55,13 +56,22 @@ function Board({ xIsNext, squares, onPlay }) {
     <>
       <div className="status">{status}</div>
       {[0, 3, 6].map(fila => <div key={fila} className="board-row">
-        {[0 + fila, 1 + fila, 2 + fila].map(i => <Square key={i} value={squares[i]} onSquareClick={() => handleClick(i)} />)}
+        {[0 + fila, 1 + fila, 2 + fila].map(i => <Square iluminada={casillaIluminada(i)} key={i} value={squares[i]} onSquareClick={() => handleClick(i)} />)}
       </div>)}
 
       {/* {filas} */}
     </>
   );
+  function casillaIluminada(i) {
+    if(!posicionesGanadoras) {
+      return false;
+    }
+
+    return posicionesGanadoras.indexOf(i) >= 0;
+  }
+
 }
+
 
 export default function Game() {
   const [ascendente, setAscendente] = useState(true);
@@ -141,7 +151,7 @@ function calculateWinner(squares) {
     const [a, b, c] = line;
 
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return [a, b, c];
     }
   }
 
