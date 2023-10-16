@@ -13,6 +13,8 @@ function Board({ xIsNext, squares, onPlay }) {
   if (posicionesGanadoras) {
     const winner = squares[posicionesGanadoras[0]];
     status = "Winner: " + winner;
+  } else if(calcularEmpate(squares)) {
+    status = "EMPATE";
   } else {
     status = "Next player: " + (xIsNext ? "X" : "O");
   }
@@ -135,6 +137,11 @@ export default function Game() {
     return ascendente ? movimientos: movimientos.reverse();
   }
 }
+
+function calcularEmpate(squares) {
+  return squares.indexOf(null) === -1;
+}
+
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2],
